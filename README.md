@@ -5,7 +5,7 @@ It takes a board and returns the moves that clear it — or proves that none exi
 It can also read the board off a screenshot, and play the real game by driving
 your mouse.
 
-**▶ [Play it in your browser](https://claude.ai/code/artifact/e4681197-030d-46c8-a9e6-87fbf8482e84)** —
+**▶ [Play it at marvyn.com/sigmars-garden](https://marvyn.com/sigmars-garden/)** —
 the rules, the search and the screenshot reader all ported to JavaScript, so you
 can play a board, have it solved, or drop in a screenshot of the real game and
 watch it read all 55 marbles back. Nothing to install.
@@ -277,7 +277,14 @@ and `pillow`; autoplay additionally needs Windows.
 ```
 python -m pytest tests -q     # 113 tests
 node web/test.cjs             # the JavaScript port, against the same facts
+python tools/build_artifact.py    # rebuild the page from web/
 ```
+
+`tools/build_artifact.py` writes `web/site/index.html`, which is what is
+published at [marvyn.com/sigmars-garden](https://marvyn.com/sigmars-garden/) —
+copy it to `sigmars-garden/index.html` in the `MarvynBailly.github.io` repo. It
+is one self-contained file: the rules, the search, the reader and the templates
+are all inside it, so it needs no server and no network.
 
 The vision tests check that reading survives the ways *another* screenshot would
 differ — 0.7×–3× rescaling, croppings, JPEG down to q=35, brightness, contrast and

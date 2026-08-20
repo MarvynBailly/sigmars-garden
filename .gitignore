@@ -6,3 +6,4 @@ __pycache__/
 # web/artifact.html is kept: it is the page that gets published.
 web/preview.html
 web/vision_test.html
+web/site/

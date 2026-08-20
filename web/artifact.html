@@ -228,7 +228,10 @@
   footer {
     max-width: 66ch; margin: 0 auto; padding-top: 26px;
     border-top: 1px solid var(--line); color: var(--faint); font-size: 13px;
+    display: flex; justify-content: space-between; gap: 18px; flex-wrap: wrap;
   }
+  footer a { color: var(--brass); text-decoration: none; border-bottom: 1px solid transparent; }
+  footer a:hover, footer a:focus-visible { border-bottom-color: var(--brass); }
 </style>
 
 <div class="wrap">
@@ -553,8 +556,10 @@
     </section>
 
     <footer>
-      Built with Claude Code against Opus Magnum by Zachtronics. The puzzle, its
-      artwork and its alchemical glyphs are theirs; this is a solver for it.
+      <span>
+        Opus Magnum is by Zachtronics. The puzzle, its artwork and its
+        alchemical glyphs are theirs; this is a solver for it.
+      </span>
     </footer>
   </article>
 </div>
