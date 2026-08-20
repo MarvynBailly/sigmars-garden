@@ -10,9 +10,11 @@ Writes three files from the same source:
                          chosen system stack.
   web/preview.html       the same content as a full document, for opening locally
                          or driving with a headless browser
-  web/site/index.html    for marvyn.com/sigmars-garden/. A full document that
-                         does load the site's own typefaces, so the page reads as
-                         part of that site rather than a visitor on it.
+  docs/index.html        what GitHub Pages serves at marvyn.com/sigmars-garden/.
+                         A full document that does load marvyn.com's own
+                         typefaces, so the page reads as part of that site rather
+                         than a visitor on it. Pages is pointed at docs/ so the
+                         published site is this page and nothing else.
 
 Everything else is inlined, because the page has to work with no network at all.
 """
@@ -88,12 +90,16 @@ def main() -> int:
     outputs = [
         (WEB / "artifact.html", standalone),
         (WEB / "preview.html", document(standalone)),
-        (WEB / "site" / "index.html", document(on_site, SITE_FONTS)),
+        (ROOT / "docs" / "index.html", document(on_site, SITE_FONTS)),
     ]
     for path, text in outputs:
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(text, encoding="utf-8")
         print(f"{path.relative_to(ROOT).as_posix()}: {path.stat().st_size / 1024 / 1024:.2f} MB")
+
+    # Without this, Pages runs the folder through Jekyll, which ignores files
+    # beginning with an underscore and rewrites what it feels like.
+    (ROOT / "docs" / ".nojekyll").write_text("", encoding="utf-8")
 
     artifact = outputs[0][0]
     if artifact.stat().st_size > 16 * 1024 * 1024:

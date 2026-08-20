@@ -243,6 +243,7 @@ sigmar/
 web/             the browser port: same rules, search and reader in JavaScript
 boards/          board files, and the two reference screenshots
 tools/           template building and page assembly
+docs/            the built page, served by GitHub Pages
 tests/           113 tests
 ```
 
@@ -280,11 +281,12 @@ node web/test.cjs             # the JavaScript port, against the same facts
 python tools/build_artifact.py    # rebuild the page from web/
 ```
 
-`tools/build_artifact.py` writes `web/site/index.html`, which is what is
-published at [marvyn.com/sigmars-garden](https://marvyn.com/sigmars-garden/) —
-copy it to `sigmars-garden/index.html` in the `MarvynBailly.github.io` repo. It
-is one self-contained file: the rules, the search, the reader and the templates
-are all inside it, so it needs no server and no network.
+`tools/build_artifact.py` writes `docs/index.html`, which GitHub Pages serves at
+[marvyn.com/sigmars-garden](https://marvyn.com/sigmars-garden/) — Pages is
+pointed at `docs/`, so the published site is that page and nothing else. It is
+one self-contained file: the rules, the search, the reader and the templates are
+all inside it, so it needs no server and no network. Rebuild and push to
+publish.
 
 The vision tests check that reading survives the ways *another* screenshot would
 differ — 0.7×–3× rescaling, croppings, JPEG down to q=35, brightness, contrast and
