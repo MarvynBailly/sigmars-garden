@@ -1,0 +1,15 @@
+# Transcribed from a second in-game screenshot (a ring layout: the two
+# outer rings full, gold alone in the centre).
+# Read by 'sigmar read', then verified: counts match a standard deal exactly,
+# and the marbles it calls playable are exactly the ones the game draws lit.
+     f e f w a m
+    a a e e v s w
+   v q . . . . m q
+  q a . . . . . f w
+ w a . . . . . . e f
+s s . . . 6 . . . a v
+ e m . . . . . . a q
+  e q . . . . . e f
+   v s . . . . e f
+    3 w f 4 w 5 w
+     f w a m 1 2

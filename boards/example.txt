@@ -1,0 +1,12 @@
+# Sigmar's Garden board (seed 3)
+     . . a . . .
+    a q w . 1 q .
+   a . 4 v . q m .
+  . 2 . s . s a f .
+ w a f m e f v m m .
+. w e s e 6 w f e w .
+ . q . s f w . a v .
+  w . e f . 5 q e .
+   . f 3 f . e . a
+    . w a . e v .
+     . . . . . .

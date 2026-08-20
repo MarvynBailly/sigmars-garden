@@ -1,0 +1,565 @@
+<style>
+  /* Dark-first: the subject is a lit board in a dark metal frame, so :root
+     carries the dark palette and light is the deliberate second theme. The
+     board plate itself stays dark in both -- it is a physical instrument, and
+     the marble colours are calibrated against it. */
+  :root {
+    --ink:        #12130F;
+    --panel:      #1C1E18;
+    --raised:     #262922;
+    --line:       #34382C;
+    --text:       #E6E3D3;
+    --muted:      #9B9A85;
+    --faint:      #6E6E5D;
+    --brass:      #C9A227;
+    --brass-dim:  #8A7118;
+    --verdigris:  #5FA98F;
+    --mars:       #C4553B;
+    --shadow:     rgba(0, 0, 0, .55);
+
+    /* The board is a lit instrument in a dark frame, so its own colours are
+       fixed in both themes -- the marble colours are calibrated against them,
+       and a board that inverted with the page would need a second palette. */
+    --plate:      #14160F;
+    --cell:       #26291F;
+    --cell-edge:  #383C2E;
+    --plate-edge: #43482F;
+
+    --display: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+    --body: ui-sans-serif, "Segoe UI", system-ui, -apple-system, Helvetica, Arial, sans-serif;
+    --mono: "Cascadia Mono", "Cascadia Code", Consolas, ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --ink:       #EDE9DC;
+      --panel:     #F6F3E9;
+      --raised:    #FFFDF5;
+      --line:      #D3CCB8;
+      --text:      #23241C;
+      --muted:     #5F5F4E;
+      --faint:     #86846F;
+      --brass:     #8A6D0B;
+      --brass-dim: #A98C22;
+      --verdigris: #2F7D62;
+      --mars:      #A63A22;
+      --shadow:    rgba(60, 55, 35, .18);
+    }
+  }
+  :root[data-theme="light"] {
+    --ink:       #EDE9DC;
+    --panel:     #F6F3E9;
+    --raised:    #FFFDF5;
+    --line:      #D3CCB8;
+    --text:      #23241C;
+    --muted:     #5F5F4E;
+    --faint:     #86846F;
+    --brass:     #8A6D0B;
+    --brass-dim: #A98C22;
+    --verdigris: #2F7D62;
+    --mars:      #A63A22;
+    --shadow:    rgba(60, 55, 35, .18);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--ink);
+    color: var(--text);
+    font-family: var(--body);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 40px 22px 80px; }
+
+  /* ---- masthead ---- */
+  header { display: flex; flex-direction: column; gap: 10px; margin-bottom: 30px; }
+  .eyebrow {
+    font-family: var(--mono); font-size: 11.5px; letter-spacing: .18em;
+    text-transform: uppercase; color: var(--brass);
+  }
+  h1 {
+    font-family: var(--display); font-weight: 600; letter-spacing: -.015em;
+    font-size: clamp(34px, 5.5vw, 56px); line-height: 1.04; margin: 0;
+    text-wrap: balance;
+  }
+  .standfirst {
+    font-family: var(--display); font-size: clamp(17px, 2.2vw, 21px);
+    color: var(--muted); max-width: 62ch; margin: 0; line-height: 1.45;
+  }
+
+  /* ---- the workbench ---- */
+  .bench { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 20px; align-items: start; }
+  @media (max-width: 880px) { .bench { grid-template-columns: minmax(0, 1fr); } }
+
+  .plate {
+    background: var(--plate);
+    border: 1px solid var(--plate-edge);
+    border-radius: 4px;
+    padding: 14px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .04), 0 12px 34px -18px var(--shadow);
+  }
+  .plate svg { display: block; width: 100%; height: auto; }
+
+  aside { display: flex; flex-direction: column; gap: 12px; }
+  .card {
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: 4px; padding: 13px 14px;
+  }
+  .card h3 {
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: .16em;
+    text-transform: uppercase; color: var(--faint);
+    margin: 0 0 9px; font-weight: 600;
+  }
+  .readout {
+    display: flex; justify-content: space-between; gap: 10px;
+    font-family: var(--mono); font-size: 13px; font-variant-numeric: tabular-nums;
+  }
+  .readout b { color: var(--brass); font-weight: 600; }
+  #status { font-size: 13.5px; min-height: 3.2em; margin-top: 8px; color: var(--muted); }
+  #status.good { color: var(--verdigris); }
+  #status.bad { color: var(--mars); }
+
+  .buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+  button {
+    font: inherit; font-size: 13px; padding: 8px 6px; cursor: pointer;
+    color: var(--text); background: var(--raised);
+    border: 1px solid var(--line); border-radius: 3px;
+    transition: border-color .12s, background .12s;
+  }
+  button:hover:not(:disabled) { border-color: var(--brass); background: var(--panel); }
+  button:focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; }
+  button:disabled { opacity: .4; cursor: default; }
+  button.key { border-color: var(--brass-dim); color: var(--brass); }
+  .buttons .wide { grid-column: 1 / -1; }
+
+  #tally { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px 4px; }
+  .chip { text-align: center; font-family: var(--mono); font-size: 10px; color: var(--faint); }
+  .chip.gone { opacity: .28; }
+  #plan {
+    max-height: 190px; overflow-y: auto; font-family: var(--mono);
+    font-size: 11px; line-height: 1.7; scrollbar-width: thin;
+  }
+  #plan div { padding: 0 4px; border-radius: 2px; white-space: pre; }
+  #plan div.done { opacity: .3; }
+  #plan div.now { background: var(--raised); color: var(--brass); }
+
+  #drop {
+    border: 1px dashed var(--line); border-radius: 4px; padding: 13px 14px;
+    background: var(--panel); transition: border-color .12s;
+  }
+  #drop.hot { border-color: var(--brass); }
+  #drop p { margin: 0 0 9px; font-size: 12.5px; color: var(--muted); }
+  kbd {
+    font-family: var(--mono); font-size: 11px; padding: 1px 5px;
+    border: 1px solid var(--line); border-radius: 3px; background: var(--raised);
+  }
+
+  /* ---- board pieces ---- */
+  .hex { fill: var(--cell); stroke: var(--cell-edge); stroke-width: 1; }
+  .marble { transition: opacity .14s; }
+  .marble.locked { opacity: .3; }
+  .cell.live { cursor: pointer; }
+  .ring { fill: none; }
+  .ring.pick { stroke: var(--brass); stroke-width: 3; }
+  .ring.mate { stroke: var(--verdigris); stroke-width: 2.5; stroke-dasharray: 4 4; }
+  .ring.hint { stroke: #6FC6E8; stroke-width: 3.5; }
+  .ring.doubt { stroke: var(--mars); stroke-width: 2.5; stroke-dasharray: 3 3; }
+  @keyframes breathe { 0%, 100% { opacity: 1 } 50% { opacity: .25 } }
+  .ring.mate, .ring.hint { animation: breathe 1.15s ease-in-out infinite; }
+  @media (prefers-reduced-motion: reduce) {
+    .ring.mate, .ring.hint { animation: none; }
+    * { transition: none !important; }
+  }
+
+  /* ---- the write-up ---- */
+  article { max-width: 66ch; margin: 62px auto 0; }
+  article section { margin-bottom: 46px; }
+  h2 {
+    font-family: var(--display); font-size: 27px; font-weight: 600;
+    letter-spacing: -.01em; margin: 0 0 4px; text-wrap: balance;
+  }
+  h2 + .kicker {
+    font-family: var(--mono); font-size: 11px; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--brass); margin: 0 0 16px;
+  }
+  h3.sub {
+    font-family: var(--body); font-size: 15.5px; font-weight: 600;
+    margin: 26px 0 6px; color: var(--text);
+  }
+  article p { margin: 0 0 14px; }
+  article ul { margin: 0 0 14px; padding-left: 20px; }
+  article li { margin-bottom: 8px; }
+  article code {
+    font-family: var(--mono); font-size: .87em;
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: 3px; padding: 1px 5px;
+  }
+  .rule {
+    border: 0; height: 1px; background: var(--line);
+    margin: 0 0 46px; position: relative; overflow: visible;
+  }
+  .rule::after {
+    content: "☉"; position: absolute; left: 50%; top: -.72em;
+    transform: translateX(-50%); background: var(--ink);
+    padding: 0 12px; color: var(--brass); font-size: 15px;
+  }
+  figure { margin: 0 0 18px; }
+  figure pre {
+    font-family: var(--mono); font-size: 11.5px; line-height: 1.55;
+    background: var(--panel); color: var(--text);
+    border: 1px solid var(--line); border-radius: 4px;
+    padding: 14px; overflow-x: auto; margin: 0;
+  }
+  figcaption { font-size: 12.5px; color: var(--faint); margin-top: 7px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin-bottom: 14px; }
+  th, td {
+    text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--line);
+    font-variant-numeric: tabular-nums;
+  }
+  th {
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: .1em;
+    text-transform: uppercase; color: var(--faint); font-weight: 600;
+  }
+  td.num { text-align: right; font-family: var(--mono); }
+  .legend { display: grid; grid-template-columns: repeat(auto-fill, minmax(128px, 1fr)); gap: 10px; margin-bottom: 16px; }
+  .legend div { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+  .legend span { color: var(--muted); }
+  footer {
+    max-width: 66ch; margin: 0 auto; padding-top: 26px;
+    border-top: 1px solid var(--line); color: var(--faint); font-size: 13px;
+  }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Opus Magnum · Sigmar's Garden</div>
+    <h1>A solver that reads the board off your screen and plays it</h1>
+    <p class="standfirst">
+      Sigmar's Garden is the marble puzzle tucked inside Opus Magnum. This page is
+      the whole thing working in your browser: play it, let it solve it, or paste a
+      screenshot of the real game and watch it read all 55 marbles back.
+    </p>
+  </header>
+
+  <div class="bench">
+    <div class="plate"><svg id="board" viewBox="0 0 700 660" aria-label="Sigmar's Garden board"></svg></div>
+
+    <aside>
+      <div class="card">
+        <div class="readout"><span>Marbles left</span> <b id="left">55</b></div>
+        <div class="readout"><span>Moves played</span> <b id="played">0</b></div>
+        <div id="status">Click a lit marble, then a matching one. Faded marbles are blocked.</div>
+      </div>
+
+      <div class="card">
+        <h3>Play</h3>
+        <div class="buttons">
+          <button id="new" class="key">New board</button>
+          <button id="reset">Reset</button>
+          <button id="undo">Undo</button>
+          <button id="hint">Hint</button>
+          <button id="check" class="wide">Can this still be won?</button>
+          <button id="autoplay" class="key wide">Solve it for me</button>
+        </div>
+        <div id="plan" style="margin-top:10px"></div>
+      </div>
+
+      <div class="card" id="drop">
+        <h3>Read a screenshot</h3>
+        <p>Press <kbd>Ctrl</kbd>+<kbd>V</kbd> to paste a screenshot of the game, or drop an image here.</p>
+        <div class="buttons"><button id="pick" class="wide">Choose an image…</button></div>
+        <input type="file" id="file" accept="image/*" hidden>
+      </div>
+
+      <div class="card">
+        <h3>Marbles remaining</h3>
+        <div id="tally"></div>
+      </div>
+    </aside>
+  </div>
+
+  <article>
+    <hr class="rule">
+
+    <section>
+      <h2>How the game works</h2>
+      <p class="kicker">Fifty-five marbles, twenty-eight moves</p>
+      <p>
+        Marbles sit on a hexagonal board of 91 cells. You clear them in matching
+        pairs, and you win by clearing the lot. Two rules do all the work.
+      </p>
+      <h3 class="sub">A marble is only free if three of its six neighbours are empty and touching</h3>
+      <p>
+        Not any three — three <em>in a row</em> around it. Two gaps on opposite
+        sides do not count. Space off the edge of the board counts as empty, which
+        is why the rim clears first and the middle is the fight.
+      </p>
+      <h3 class="sub">What matches what</h3>
+      <div class="legend" id="legend"></div>
+      <ul>
+        <li>The four elements — fire, water, earth, air — pair with their own kind.</li>
+        <li>Salt pairs with any element, or with another salt. It is the flexible one, and only four exist.</li>
+        <li>Vitae and mors pair only with each other.</li>
+        <li>The five metals go in order of transmutation — lead, tin, iron, copper, silver — each with a quicksilver. Tin cannot go while lead is still down.</li>
+        <li>Gold clears alone, once it is the last metal standing.</li>
+      </ul>
+      <p>
+        A full deal is always the same multiset: eight of each element, four salt,
+        four vitae, four mors, five quicksilver, and one of each metal. That adds up
+        to 55 marbles and exactly 28 moves — 27 pairs and the gold. The count turns
+        out to matter enormously later.
+      </p>
+    </section>
+
+    <hr class="rule">
+
+    <section>
+      <h2>Solving it</h2>
+      <p class="kicker">A search that fits in one integer</p>
+      <p>
+        A marble never moves, so its position tells you its type. That means the
+        whole state of a game is just <em>which cells are still occupied</em> — 91
+        bits, one integer. The solver is a depth-first search over those integers
+        that remembers every state it has proven unwinnable, so a dead end reached
+        by a different order of moves is recognised instead of re-explored.
+      </p>
+      <p>
+        Freedom is a lookup, not a calculation. Each cell's six neighbours are
+        stored in cyclic order, so "three contiguous empty spaces" is a window over
+        a 64-entry table. Directions that run off the board point at a bit that is
+        never set, so edge cells count their missing sides as empty for free.
+      </p>
+      <h3 class="sub">Two facts about the game shape the search</h3>
+      <p>
+        <strong>Removing marbles never blocks anything.</strong> Freedom only ever
+        increases. So the difficulty is not the order of the moves, it is the
+        <em>pairing</em>: spend a salt on an element that still had a partner of its
+        own kind, and you can orphan a marble twenty moves later. Salt is therefore
+        played last, and the search carries a parity check — each element left in an
+        odd number must consume a salt, and the leftover salt has to pair with
+        itself. Positions failing that are dead before the search notices.
+      </p>
+      <p>
+        <strong>Metals are forced.</strong> Only the lowest metal on the board can
+        go, and only against quicksilver, so those moves have no alternative pairing
+        and cost nothing to take early.
+      </p>
+      <h3 class="sub">Restarts, and why the jitter has to be big</h3>
+      <p>
+        Solving times are heavy-tailed. The median board falls in 29 states; every
+        so often one choice near the root buries the search in a barren subtree. So
+        the search runs in rounds of doubling budgets, re-shuffling its tie-breaks
+        each round, and <em>keeps</em> the set of dead states across rounds —
+        deadness does not depend on how a state was reached, so a restart never
+        repeats prior work, it only re-picks its gambles.
+      </p>
+      <p>
+        The size of the shuffle turned out to be the whole trick. With a small
+        jitter, restarts only reshuffled marbles <em>within</em> a class of move,
+        kept re-walking the same doomed opening, and the two worst boards in 300
+        needed over 1.5 million states. Making the jitter large enough to reconsider
+        which <em>kind</em> of move to open with brought both under 140,000.
+      </p>
+      <h3 class="sub">Two good ideas that measurement threw out</h3>
+      <ul>
+        <li>Scoring moves by how many marbles they actually unlock searched fewer states but cost more wall-clock than it saved.</li>
+        <li>A fixpoint "could this marble ever be freed?" prune never fired once across 600 boards — these boards die on pairing, not geometry — and cost two to three times as much.</li>
+      </ul>
+      <table>
+        <thead><tr><th>Boards</th><th>Result</th><th class="num">Median</th><th class="num">Worst</th></tr></thead>
+        <tbody>
+          <tr><td>300 generated solvable</td><td>300 solved</td><td class="num">0.6 ms</td><td class="num">11.9 s</td></tr>
+          <tr><td>300 dense random deals</td><td>68 solved, 232 <em>proven</em> unsolvable</td><td class="num">23 ms</td><td class="num">2.8 s</td></tr>
+        </tbody>
+      </table>
+      <p>
+        Test boards are built backwards — pairs of a solution placed onto an empty
+        board in reverse, each required to land free — so every generated board
+        comes with a guaranteed solution, and the solver is checked against a real
+        oracle rather than its own output.
+      </p>
+    </section>
+
+    <hr class="rule">
+
+    <section>
+      <h2>Reading the board off a screenshot</h2>
+      <p class="kicker">Finding a hexagon, then fifty-five glyphs</p>
+      <p>
+        Transcribing 55 marbles by hand is miserable, so the next step was to read
+        them from a picture. Two problems: find the board, then name every cell.
+      </p>
+      <h3 class="sub">Finding it</h3>
+      <p>
+        The playing surface is far brighter than the metal around it, so a
+        brightness split isolates it — chosen per image, because a fixed threshold
+        read the reference perfectly and then lost 60 cells on a copy 20% brighter.
+        The board is a hexagon whose extent in a few directions pins down its centre
+        and scale.
+      </p>
+      <p>
+        On a whole desktop the board is <em>not</em> the biggest bright thing — a
+        bright wallpaper beats it easily — so candidates are ranked by shape rather
+        than size. A board's width and height imply the same cell size and it fills
+        the area that size predicts; the wallpaper scored 37% skew and 0.55 fill
+        against the board's 3% and 1.06.
+      </p>
+      <h3 class="sub">Naming the cells</h3>
+      <p>
+        The game draws blocked marbles washed out and free ones vivid, so the
+        features have to ignore that entirely. Each cell is high-pass filtered — the
+        tile minus a blurred copy of itself — which throws away the marble's shading
+        and the cell's bevel and leaves the engraved glyph, then normalised so faint
+        and bold match. Colour enters only as a <em>direction</em>: the disc's colour
+        minus the cell background, scaled to unit length, because fading a marble
+        toward the beige changes that vector's length but not its heading.
+      </p>
+      <p>Three things were found by measuring rather than assuming:</p>
+      <ul>
+        <li>
+          Plain contrast-stretched brightness gets 96.5% of cells, and its mistakes
+          are exactly fire↔earth and vitae↔salt — pairs the eye separates instantly.
+          The marble's radial shading dominates the tile and the glyph is a small
+          part of the signal. High-pass filtering takes it to 100%.
+        </li>
+        <li>
+          "Empty" has to be a template class, not a brightness threshold. Six
+          blocked marbles — faint vitae, salt, quicksilver — sit <em>below</em> the
+          brightest empty cell, so no threshold separates them. Their glyphs are
+          unmistakable.
+        </li>
+        <li>
+          Templates are stored at several small offsets each. Detection lands within
+          a pixel or two but not exactly, and matching a glyph against a template
+          shifted 2px loses the outer ring of cells.
+        </li>
+      </ul>
+      <p>
+        The reader refuses rather than guessing when the board is too small to
+        resolve, cut off by the crop, or not a board. Whatever slips past that is
+        caught by the marble counts, because a misread almost always shows up as
+        some count differing from a standard deal.
+      </p>
+      <h3 class="sub">The constraint that fixed the last bug</h3>
+      <p>
+        A long automated run once died after one win: lead read as mors — both dark
+        marbles, and lead has the fewest examples because it appears once per board.
+        The fix was to stop reading a fresh deal cell by cell. The counts are known
+        exactly, so the board is solved as an assignment against them: the cell that
+        <em>has</em> to be the lead is the one that fits it least badly.
+      </p>
+      <p>
+        Testing that fix caught something worse. Imposing the counts always succeeds
+        — on a board still animating in, it cheerfully invented 55 marbles from an
+        empty table, and because the counts then matched by construction, the check
+        that was supposed to validate the deal had been destroyed. A visible bug had
+        been replaced with a silent one. So the constrained result is only accepted
+        when the plain read already saw a full board and needed at most a couple of
+        cells overruled.
+      </p>
+    </section>
+
+    <hr class="rule">
+
+    <section>
+      <h2>Playing the real game</h2>
+      <p class="kicker">Screenshot, solve, click, verify</p>
+      <p>
+        The last piece drives the actual game: screenshot the monitor, find the
+        board among everything else on screen, read it, solve it, and click the
+        pairs. It talks to Windows directly rather than through an automation
+        library, because the usual one scales its coordinates by the display's DPI
+        setting and so misses every click on a 4K screen.
+      </p>
+      <h3 class="sub">It checks its own work</h3>
+      <p>
+        The loop is deliberately not "solve once, then fire 56 clicks and hope".
+        After every pair it re-reads those two cells and confirms they actually went
+        empty. A click that misses leaves the plan and the board disagreeing, and
+        every later click then lands on the wrong marble — so it retries, more
+        slowly, and then gives up on that board rather than clicking on blind.
+      </p>
+      <p>
+        Failures say <em>which</em> thing went wrong, because the fixes differ:
+        "they read as Fire and Water, which do not match — misread" versus "the pair
+        still matches, so the click did not register". It also watches the game's own
+        wins counter after each board. It never reads the number, only sees the box
+        change, which is enough to confirm the game agreed — and that caught a real
+        bug immediately, when a board left already-cleared from an earlier run
+        "solved in 0 moves" and was scored as a win while the counter sat still.
+      </p>
+      <h3 class="sub">Making it quick</h3>
+      <p>
+        The first version took 1.37 seconds a move, nearly 40 seconds a board. Almost
+        none of it was the clicking:
+      </p>
+      <ul>
+        <li>
+          <strong>Screen capture cost 110ms a go, whatever the size.</strong> The
+          imaging library rebuilds its device contexts on every call, so grabbing
+          forty pixels cost the same as grabbing a 4K screen. Holding them open
+          across calls takes the same grab to 6ms, pixel for pixel identical.
+        </li>
+        <li>
+          <strong>Verifying a move re-read all 91 cells</strong> to look at two.
+          Reading just those two costs 27ms against 370.
+        </li>
+        <li>
+          <strong>A fixed 450ms sleep waited for the clearing animation.</strong>
+          Polling instead finishes as soon as the pair actually goes.
+        </li>
+      </ul>
+      <p>
+        That is 227ms a move, about six seconds a board. What is left is the game's
+        own animations: dealing takes 4.3 seconds and nothing can hurry it, so the
+        loop waits by watching the board stop changing — an idle board measures a
+        frame-to-frame difference of exactly zero, which makes "still" unambiguous.
+        It waits for the animation to <em>start</em> first, because the deal does not
+        begin until 400ms after the click and the board is otherwise trivially still
+        the moment it is asked.
+      </p>
+      <figure>
+        <pre>64/64 wins over 65 boards, 1 abandoned
+1,792 moves played, 1 click missed
+7 of 65 deals needed the known counts to settle a cell</pre>
+        <figcaption>
+          One unattended run. Every win confirmed by the game's own counter. The
+          seven corrected deals are each a board that, before that fix, would have
+          ended the run.
+        </figcaption>
+      </figure>
+    </section>
+
+    <hr class="rule">
+
+    <section>
+      <h2>What is running where</h2>
+      <p class="kicker">On this page, and in the repository</p>
+      <p>
+        Everything above this line runs in your browser — the rules, the search, and
+        the screenshot reader are ported from the Python, using the same templates
+        cut from two real screenshots. The solver here matches the original state
+        for state: the reference board solves in 83.
+      </p>
+      <p>
+        The Python project adds what a browser cannot do: driving the real game. It
+        ships a command line tool, a local web front end for checking the rules by
+        hand, and the autoplay loop, with 113 tests covering the geometry, every
+        matching rule, the search, the reader and the click layer. The autoplay tests
+        stub out the screen and the mouse entirely — nothing in the suite moves a
+        real pointer.
+      </p>
+    </section>
+
+    <footer>
+      Built with Claude Code against Opus Magnum by Zachtronics. The puzzle, its
+      artwork and its alchemical glyphs are theirs; this is a solver for it.
+    </footer>
+  </article>
+</div>
+
+<script>{{SIGMAR_JS}}</script>
+<script>{{TEMPLATE_JS}}</script>
+<script>{{VISION_JS}}</script>
+<script>{{UI_JS}}</script>

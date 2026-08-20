@@ -1,0 +1,30 @@
+# Blank template -- copy this and fill in your board.
+#
+# Rows run top to bottom, cells left to right within a row.
+# Row lengths must be 6 7 8 9 10 11 10 9 8 7 6 (91 cells, 55 marbles).
+# Leading spaces are cosmetic; only the non-space characters count.
+#
+#   .  empty space
+#   f  fire        (red,        up triangle)
+#   w  water       (teal,       down triangle)
+#   e  earth       (green,      down triangle with a bar)
+#   a  air         (pale blue,  up triangle with a bar)
+#   s  salt        (cream,      circle with a bar)
+#   v  vitae       (pink,       up triangle on a crossed stem)
+#   m  mors        (black,      down triangle on a crossed stem)
+#   q  quicksilver (cream,      Mercury)
+#   1  lead        (Saturn)     4  copper (Venus)
+#   2  tin         (Jupiter)    5  silver (Moon)
+#   3  iron        (Mars)       6  gold   (Sun)
+
+     . . . . . .
+    . . . . . . .
+   . . . . . . . .
+  . . . . . . . . .
+ . . . . . . . . . .
+. . . . . . . . . . .
+ . . . . . . . . . .
+  . . . . . . . . .
+   . . . . . . . .
+    . . . . . . .
+     . . . . . .

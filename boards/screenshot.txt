@@ -1,0 +1,14 @@
+# Transcribed from the in-game screenshot.
+# f=fire w=water e=earth a=air  s=salt  v=vitae m=mors  q=quicksilver
+# 1=lead 2=tin 3=iron 4=copper 5=silver 6=gold   . = empty
+     . . . . . .
+    f m v . . . .
+   s a s e q w v e
+  m q . a 2 w . f e
+ . w . f a a v . e 4
+. . e a m 6 a v f 1 .
+ . . a w q w m f w .
+  . . e f q e w . .
+   . w a . . 3 . .
+    . s q f f . .
+     . e 5 s . .
