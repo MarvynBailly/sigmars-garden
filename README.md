@@ -295,5 +295,5 @@ carrying on, and that a dry run clicks nothing.
 
 ---
 
-Built with Claude Code. The puzzle, its artwork and its alchemical glyphs belong to
+The puzzle, its artwork and its alchemical glyphs belong to
 Zachtronics; this is a solver for it.
